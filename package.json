@@ -14,7 +14,8 @@
 
 
 		"influx": "*",
-		"mongodb": "*"
+		"mongodb": "*",
+		"redis": "*"
 	},
 
 	"scripts": {

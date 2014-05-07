@@ -14,6 +14,7 @@ module.exports = ->
 				if err
 					defer.reject err
 				else
+					db.metrics = db.collection 'metrics'
 					defer.resolve db
 
 		promise.then (db) ->
