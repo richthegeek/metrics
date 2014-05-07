@@ -2,14 +2,16 @@ module.exports = (app) ->
 
 	app.post '/metrics', (req, res, next) ->
 		write = {}
+		count = 0
 		for id, points of req.body
 			target = req.account + '.' + id
 			write[target] = [].concat points
+			count += write[target].length
 
 		req.influx.writeSeries write, req.errorHandler ->
 			res.send {
-				targets: Object.keys(write)
-				result: arguments
+				status: "OK",
+				message: "#{count} datums received"
 			}
 
 	app.post '/metrics/:id', (req, res, next) ->
@@ -17,6 +19,6 @@ module.exports = (app) ->
 		input = [].concat req.body
 		req.influx.writePoints target, input, req.errorHandler ->
 			res.send {
-				target: target,
-				result: arguments
+				status: "OK",
+				message: "#{input.length} datums received"
 			}
