@@ -19,7 +19,7 @@ module.exports = ->
 		# TODO: ensure this actually works as expected with multiple users
 		req.UA.setToken token
 		
-		req.redis.get key, req.errorHandler (err, account) ->
+		req.getAccount token, (err, account) ->
 			# token was cached, so we're authorised
 			if account
 				req.account = account
@@ -30,13 +30,10 @@ module.exports = ->
 			req.UA.User.get {user_id: 'self'}, (err, user) ->
 				if user?[0]?.user_id?
 					uid = user[0].user_id
-					return req.redis.set [key, uid, "EX", 600], (err) ->
-						if err
-							return next err
-
+					return req.cacheToken token, uid, ->
 						req.account = uid
 						# store this to occasionally reduce a request on GET /account
 						res.user = user[0]
 						next()
-				
+
 				return next new Error 'The provided token was invalid or has expired. Please login.'

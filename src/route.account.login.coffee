@@ -8,7 +8,7 @@ module.exports = (app) ->
 		req.UA.User.login {login: email, password: password}, req.errorHandler (err, user) ->
 			# todo: handle UserApp "locks"
 			# cache the token for fast lookup
-			req.redis.set ["metrics:tokens:" + user.token, user.user_id, "EX", 600], req.errorHandler () ->
+			req.cacheToken user.token, user.user_id, ->
 				res.send {
 					status: "OK",
 					message: "The credentials were correct! The token will last for ",
