@@ -1,0 +1,209 @@
+FORMAT: 1A
+HOST: http://www.google.com
+
+# Influx Metrics
+
+# Group Account
+
+## Accounts [/accounts]
+### Create an account [POST]
++ Parameters
+  + email (email address) ... This is verified before account can be used
+  + password (string) ... Mininum 5 characters
++ Request (application/json)
+
+        {"email": "myemail@mysite.com", "password": "hunter13"}
+        
++ Response 200 (application/json)
+
+        {
+            "status": "OK",
+            "message": "An account with that email address has been created, and will be available for use after email verification.",
+            "user": {
+                "email": "myemail@mysite.com",
+                "password": "hunter13"
+            }
+        }
+
+### Get information about this account [GET]
++ Parameters
+  + token (token) ... Authorisation token
++ Response 200 (application/json)
+
+        {
+            "id": "ybCyhVKEQK_uzRgmxi7ORQ",
+            "email": "richthegeek@gmail.com"
+        }
+        
+## > [/account/login]
+### Log in to an account [POST]
++ Parameters
+  + email (email address) ... This is verified before account can be used
+  + password (string) ... Mininum 5 characters
++ Request (application/json)
+
+        {"email": "myemail@mysite.com", "password": "hunter13"}
+        
++ Response 200 (application/json)
+
+        {
+            "status": "OK",
+            "message": "The credentials were correct! The token will last for XXX seconds",
+            "token": "..."
+        }
+
+# Group Metrics
+## > [/metrics]
+### List configured metrics [GET]
++ Response 200 (application/json)
+
+        {
+            "orders":  {
+                "groups": {
+                    "hourly": {
+                        "period": "1h",
+                        "retention": 168,
+                        "fields": ["total"]
+                    },
+                    "daily": {
+                        "period": "1d",
+                        "retention": 365,
+                        "fields": ["total"]
+                    }
+                },
+                "fields": {
+                    "total": {
+                        "function": "sum",
+                        "field": "value"
+                    }
+                }
+            }
+        }  
+        
+### Add data to multiple metrics [POST]
++ Request (application/json)
+
+        {
+            "orders": [{value: 100}, {value: 55}],
+            "cats": {size: 7}
+        }
+
++ Response 201 (application/json)
+
+        {
+            "status": "OK",
+            "message": "3 datums recieved"
+        }
+
+## > [/metrics/:id]
++ Parameters
+    + id (required, string, `orders`) ... Name of the metric to be tracked
+
+### Submit data to be summarised [POST]
++ Parameters
+    + time (optional, timestamp) ... Submit each datum at a time (milliseconds since epoch) other than now.
++ Request (application/json)
+
+        [
+            {value: 100},
+            {value: 150}
+        ]
+    
++ Response 201 (application/json)
+
+        {
+            "status": "OK",
+            "message": "2 datums recieved"
+        }
+
+### Update metric configuration [PUT]
++ Parameters
+    + groups (object) ... An object where the key is the name of the group and other properties as follows:
+    + .....period (string, `1d`) ... A InfluxDB time, see: <http://influxdb.org/docs/query_language/>
+    + .....retention (number, `1440`) ... The number of rolled-up periods to retain.
+    + .....fields (array, `['total']`) ... Which fields from the fields object to include in the roll-up.
+    + fields (object) ... An object where the key is the field name and other properties are as follows:
+    + .....field (string) ... The field from the input datum to execute the function on
+    + .....function (string) ... The function to use on the input field
+        + Values
+            + `count`
+            + `min`
+            + `max`
+            + `mean`
+            + `mode`
+            + `median`
+            + `distinct`
+            + `percentile`
+            + `histogram`
+            + `derivative`
+            + `sum`
+            + `stddev`
+            + `first`
+            + `last`
++ Request (application/json)
+
+        {
+            "groups": {
+                "hourly": {
+                    "period": "1h",
+                    "retention": 168,
+                    "fields": ["total"]
+                },
+                "daily": {
+                    "period": "1d",
+                    "retention": 365,
+                    "fields": ["total"]
+                }
+            },
+            "fields": {
+                "total": {
+                    "function": "sum",
+                    "field": "value"
+                }
+            }
+        }
++ Response 200 (application/json)
+
+        {
+            "status": "OK",
+            "message": "The metric has been updated"
+        }
+        
+### Delete a metric [DELETE]
+Remove all roll-ups and data for the named metric. This cannot be undone!
++ Response 200 (application/json)
+
+        {
+            "status": "OK"
+            "message": "The metric and all data related to have been deleted"
+        }
+
+### Get all roll-ups for this metric [GET]
++ Response 200 (application/json)
+
+        {
+            "hourly": [
+                {"time": "...", "total": 120},
+                {"time": "...", "total": 160},
+                {"time": "...", "total": 300}                
+            ],
+            "daily": [
+                {"time": "...", "total": 120},
+                {"time": "...", "total": 160},
+                {"time": "...", "total": 300}                
+            ]
+        }
+
+## > [/metrics/:id/:group]        
+### Get group of roll-ups for this metric [GET]
++ Parameters
+    + id (string) ... The ID of the metric
+    + group (string) ... The name of the group
+    + format (optional, string) ... One of "csv", "json"
++ Response 200 (application/json)
+
+       [
+            {"time": "...", "total": 120},
+            {"time": "...", "total": 160},
+            {"time": "...", "total": 300}                
+        ]
