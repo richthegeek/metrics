@@ -1,0 +1,23 @@
+{
+	"name": "metrics",
+	"description": "Store, compute, and retrieve metrics about input streams",
+
+	"dependencies": {
+		"async": "*",
+		"q": "*",
+
+		"userapp": "*",
+
+		"express": "4.*",
+		"body-parser": "*",
+		"morgan": "*",
+
+
+		"influx": "*",
+		"mongodb": "*"
+	},
+
+	"scripts": {
+		"start": "node-dev lib/app"
+	}
+}
