@@ -36,4 +36,7 @@ module.exports = ->
 						res.user = user[0]
 						next()
 
+						# heartbeat the token
+						req.UA.Token.heartbeat -> null
+
 				return next new Error 'The provided token was invalid or has expired. Please login.'
