@@ -18,6 +18,6 @@
 	},
 
 	"scripts": {
-		"start": "node-dev lib/app"
+		"start": "node-dev lib/index"
 	}
 }
