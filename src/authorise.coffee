@@ -1,8 +1,6 @@
 # return true if the account is authorised
 module.exports = ->
 	return (req, res, next) ->
-		console.log 'auth'
-
 		route = req.method.toUpperCase() + ' ' + req.path
 		unauthorised = [
 			'POST /account',
