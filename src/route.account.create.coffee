@@ -1,5 +1,5 @@
 module.exports = (app) ->
-
+	# Create an account
 	app.post '/account', (req, res, next) ->
 		req.body ?= {}
 		email = String req.body.email or ''

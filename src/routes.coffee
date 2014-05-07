@@ -4,6 +4,8 @@ module.exports = (app) ->
 		'account.create',
 		'account.login',
 		'account.get',
+		# todo: account.update, specifically handling pricing plans using UserApp
+		# todo: account.verify, for email verification flow
 
 		'metrics.list'
 		'metrics.save'

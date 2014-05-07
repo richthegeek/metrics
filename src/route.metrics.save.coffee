@@ -2,8 +2,10 @@ module.exports = (app) ->
 
 	metric2influx = require './influx_generator'
 
+	# save the configuration for a metric.
 	app.put '/metrics/:id', (req, res, next) ->
 
+		# copy from body to ensure we dont pick up any fluff
 		metric =
 			_id:
 				a: req.account
@@ -11,6 +13,7 @@ module.exports = (app) ->
 			groups: req.body.groups
 			fields: req.body.fields
 
+		# ensure we have at least one groups and fields entry
 		try
 			throw {field: 'groups'} if Object.keys(metric.groups).length is 0
 			throw {field: 'fields'} if Object.keys(metric.fields).length is 0
@@ -37,9 +40,7 @@ module.exports = (app) ->
 				if not metric.fields[field]?
 					return next new Error 'Metric group fields must be defined in the metric fields list'
 
-			# if group.fields.length is 0
-			# 	return next new Error 'Metric groups must have at least one field'
-
+		# todo: put this list somewhere more accessible
 		allowed_functions = ['count', 'min', 'max', 'mean', 'mode', 'median', 'distinct', 'percentile', 'histogram', 'derivative', 'sum', 'stddev', 'first', 'last']
 		for name, obj of metric.fields
 			regex = /^[a-z0-9_]+$/

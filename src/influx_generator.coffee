@@ -1,6 +1,12 @@
 module.exports = (metric, influx, callback) ->
 	async = require 'async'
 
+	###
+		Turns the JSON schema into Influx "continuous queries",
+		and ensures that those queries are the only ones for
+		these series.
+	###
+
 	### input is something like:
 		{
 			"_id": {
@@ -31,11 +37,15 @@ module.exports = (metric, influx, callback) ->
 		SELECT sum(some_random_field) as daily_revenue FROM richthegeek.orders GROUP BY time(1d) INTO richthegeek.orders.daily
 
 	###
+
+
+	# map "name={field, function}" into "function(field) as name" strings
 	fields = {}
 	first_field = null
 	for name, field of metric.fields
 		first_field or= field.field
 
+		# todo: document these two options somewhere!
 		args = ''
 		if field.function is 'percentile'
 			field.percentile or= 50
@@ -46,37 +56,40 @@ module.exports = (metric, influx, callback) ->
 
 		fields[name] = "#{field.function}(#{field.field}#{args}) as #{name}"
 
+	# series is the "collection name" in mongo-speak
 	series = metric._id.a + '.' + metric._id.i
 	queries = []
 	for name, group of metric.groups
 
+		# always count the number of entires in each grouping
 		select = ["count(#{first_field}) as cardinality"]
 		for field in group.fields
 			select.push fields[field]
 
 		grouping = ["time(#{group.period})"]
+		# the "group" option is an optional list of fields to ALSO group by
 		for field in group.group or []
 			select.unshift field
+			# because we are grouping by this, it's worth selecting these fields at the same time
 			grouping.push field
 
+		# aaand build the query
 		query = ["SELECT"]
 		query.push select.join ', '
 		query.push 'FROM', series
-
 		query.push 'GROUP BY', grouping.join ', '
 		query.push 'INTO', series + '.' + name
-
+		# send it onto the final query list
 		queries.push query.join ' '
 
-	# remove old continuous queries...
+	# remove old continuous queries on this series
+	# insert only continuous queries which aren't already present
 	influx.getContinuousQueries (err, existing) ->
 		remove = []
 		create = queries.concat []
 		for {id, query} in existing
 			if (eseries = query.match /FROM ([a-z0-9_.-]+)/i).length >= 1
-				eseries = eseries[1]
-
-				if series is eseries
+				if series is eseries[1]
 					if query not in queries
 						remove.push id
 					else

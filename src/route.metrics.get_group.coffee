@@ -1,10 +1,10 @@
 module.exports = (api) ->
 
+	# get the roll-up identified by :group for this metric
 	api.get '/metrics/:id/:group', (req, res, next) ->
 		series = [req.account, req.params.id, req.params.group].join '.'
 		
 		format = req.query.format ? 'json'
-
 		req.influx.query 'SELECT * FROM ' + series, req.errorHandler (err, data) ->
 			data = data[0] or data
 
@@ -16,6 +16,7 @@ module.exports = (api) ->
 			if format is 'csv'
 				output = [data.columns]
 					.concat(data.points)
+					# use JSON.stringify to wrap strings in quotes and such
 					.map((row) -> row.map(JSON.stringify).join(','))
 					.join("\n")
 
@@ -26,7 +27,5 @@ module.exports = (api) ->
 						key = data.columns[i]
 						obj[key] = val
 					return obj
-
 				
 			res.send output
-

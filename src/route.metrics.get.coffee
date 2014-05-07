@@ -1,10 +1,13 @@
 module.exports = (api) ->
 
+	# get all roll-ups from this metric
 	api.get '/metrics/:id', (req, res, next) ->
 		series = [req.account, req.params.id].join '.'
 		
+		# default the format to JSON
 		format = req.query.format ? 'json'
 
+		# todo: ensure this is performant!
 		req.influx.query 'SELECT * FROM /' + series + '\..*/', req.errorHandler (err, data) ->
 			for datum in data
 				datum.group = datum.name.replace series + '.', ''
@@ -17,11 +20,8 @@ module.exports = (api) ->
 
 
 			if format is 'csv'
-				output = 'TODO'
-				# output = [data.columns]
-				# 	.concat(data.points)
-				# 	.map((row) -> row.map(JSON.stringify).join(','))
-				# 	.join("\n")
+				# todo: figure out how to nicely show CSV data for multiple types. might be impossible?
+				output = 'todo'
 
 			else
 				output = {}

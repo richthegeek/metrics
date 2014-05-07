@@ -1,5 +1,5 @@
 module.exports = (app) ->
-
+	# Add multiple datums to multiple metrics all in the same request
 	app.post '/metrics', (req, res, next) ->
 		write = {}
 		count = 0
@@ -14,6 +14,7 @@ module.exports = (app) ->
 				message: "#{count} datums received"
 			}
 
+	# Add one or more datums to a single metric
 	app.post '/metrics/:id', (req, res, next) ->
 		target = req.account + '.' + req.params.id
 		input = [].concat req.body

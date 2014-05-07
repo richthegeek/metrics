@@ -1,5 +1,5 @@
 module.exports = (app) ->
-
+	# Retrieve information about the current account. Kind of useless at the minute!
 	app.get '/account', (req, res, next) ->
 		
 		loadUser = (next) -> req.UA.User.get {user_id: 'self'}, next
