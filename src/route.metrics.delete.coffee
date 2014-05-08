@@ -4,15 +4,11 @@ module.exports = (app) ->
 	# remove all data associated with a metric
 	app.del '/metrics/:id', (req, res, next) ->
 
-		id =
-			a: req.account
-			i: req.params.id
-
-		req.db.metrics.findOne {_id: id}, req.errorHandler (err, metric) ->
-			if not metric
+		req.redis.hexists 'metrics:metrics:' + req.account, req.params.id, req.errorHandler (err, result) ->
+			if not result
 				return next new Error 'No such metric!'
 
-			req.db.metrics.remove {_id: id}, req.errorHandler ->
+			req.redis.hdel 'metrics:metrics:' + req.account, req.params.id, req.errorHandler (err, result) ->
 				# find the names of any continuous queries
 				req.influx.getContinuousQueries (err, existing) ->
 					cqs = []
@@ -25,8 +21,8 @@ module.exports = (app) ->
 								cqs.push id
 								collections.push series[2]
 
-					async.forEach collections, req.influx.dropSeries.bind(req.influx), ->
-						async.forEach cqs, req.influx.dropContinuousQuery.bind(req.influx), req.errorHandler ->
+					async.each collections, req.influx.dropSeries.bind(req.influx), ->
+						async.each cqs, req.influx.dropContinuousQuery.bind(req.influx), req.errorHandler ->
 							res.send {
 								status: "OK"
 								message: "The metric was deleted, including all data"

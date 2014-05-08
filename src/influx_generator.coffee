@@ -1,5 +1,6 @@
-module.exports = (metric, influx, callback) ->
+module.exports = (metric, req, callback) ->
 	async = require 'async'
+	influx = req.influx
 
 	###
 		Turns the JSON schema into Influx "continuous queries",
@@ -57,7 +58,7 @@ module.exports = (metric, influx, callback) ->
 		fields[name] = "#{field.function}(#{field.field}#{args}) as #{name}"
 
 	# series is the "collection name" in mongo-speak
-	series = metric._id.a + '.' + metric._id.i
+	series = req.account + '.' + req.params.id
 	queries = []
 	for name, group of metric.groups
 

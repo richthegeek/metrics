@@ -4,7 +4,6 @@
 
 	"dependencies": {
 		"async": "*",
-		"q": "*",
 
 		"userapp": "*",
 
@@ -14,7 +13,6 @@
 
 
 		"influx": "*",
-		"mongodb": "*",
 		"redis": "*"
 	},
 

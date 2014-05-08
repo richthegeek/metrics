@@ -7,9 +7,6 @@ module.exports = (app) ->
 
 		# copy from body to ensure we dont pick up any fluff
 		metric =
-			_id:
-				a: req.account
-				i: req.params.id
 			groups: req.body.groups
 			fields: req.body.fields
 
@@ -59,10 +56,9 @@ module.exports = (app) ->
 			if 'string' isnt typeof obj.field
 				return next new Error 'Metric fields "field" property must be a string'
 
-		metric2influx metric, req.influx, (err) ->
-			req.db.metrics.save metric, req.errorHandler (err, ok, result) ->
+		metric2influx metric, req, (err) ->
+			req.redis.hset 'metrics:metrics:' + req.account, req.params.id, JSON.stringify(metric), req.errorHandler (err, result) ->
 				res.send {
 					status: "OK",
-					message: "The metric has been " + (result.updatedExisting and "updated" or "inserted")
-				}
-		
+					message: "The metric has been " + (result and "inserted" or "updated")
+				}			

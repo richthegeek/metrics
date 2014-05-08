@@ -14,7 +14,6 @@ module.exports = ->
 		if not token?
 			return next new Error 'This is an authorised route but no token was provided.'
 
-		key = 'metrics:tokens:' + token
 		# configure UserApp to use this token for this request
 		# TODO: ensure this actually works as expected with multiple users
 		req.UA.setToken token
