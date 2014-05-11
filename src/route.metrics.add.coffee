@@ -4,6 +4,8 @@ module.exports = (app) ->
 		write = {}
 		count = 0
 		for id, points of req.body
+			# setting time causes a lot of problems with existing CQs
+			delete points.time
 			target = req.account + '.' + id
 			write[target] = [].concat points
 			count += write[target].length
@@ -18,6 +20,7 @@ module.exports = (app) ->
 	app.post '/metrics/:id', (req, res, next) ->
 		target = req.account + '.' + req.params.id
 		input = [].concat req.body
+		input.forEach (point) -> delete point.time
 		req.influx.writePoints target, input, req.errorHandler ->
 			res.send {
 				status: "OK",
