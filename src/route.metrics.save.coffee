@@ -57,8 +57,17 @@ module.exports = (app) ->
 				return next new Error 'Metric fields "field" property must be a string'
 
 		metric2influx metric, req, (err) ->
-			req.redis.hset 'metrics:metrics:' + req.account, req.params.id, JSON.stringify(metric), req.errorHandler (err, result) ->
+			save = -> req.redis.hset 'metrics:metrics:' + req.account, req.params.id, JSON.stringify(metric), req.errorHandler (err, inserted) ->
 				res.send {
 					status: "OK",
-					message: "The metric has been " + (result and "inserted" or "updated")
-				}			
+					message: "The metric has been " + (inserted and "inserted" or "updated")
+					metric: metric
+				}
+
+			if metric.key?
+				save()
+
+			else
+				req.generateKey req.account, req.params.id, req.errorHandler (err, key) ->
+					metric.key = key
+					save()

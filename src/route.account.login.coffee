@@ -11,6 +11,6 @@ module.exports = (app) ->
 			req.cacheToken user.token, user.user_id, ->
 				res.send {
 					status: "OK",
-					message: "The credentials were correct! The token will last for ",
+					message: "The credentials were correct! Please use the provided short-term token to authorise requests.",
 					token: user.token
 				}

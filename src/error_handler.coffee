@@ -7,10 +7,11 @@ module.exports = (app) ->
 		req.errorHandler = (cb) ->
 			return (args...) ->
 				if err = args[0]
-					console.log 'ERROR!'
-					if not (err instanceof Error)
-						err = new Error err.message or err
-					return next err
+					return res.send (err.status ? 500), {
+						status: 'Error'
+						message: err.message or err
+					}
+
 				cb args...
 		next()
 
