@@ -1,0 +1,42 @@
+<html>
+<head>
+	<title>Metrics</title>
+	<link rel="stylesheet" type="text/css" href="/public/css/styles.css">
+	<script src="https://app.userapp.io/js/userapp.client.js"></script>
+	<script type="text/javascript" src="/public/js/jquery/dist/jquery.min.js"></script>
+	<script type="text/javascript" src="/public/js/api.js"></script>
+	<script type="text/javascript" src="/public/js/login.js"></script>
+</head>
+<body>
+
+	<div id="wrapper">
+
+		<header>Metrics</header>
+
+		<main>
+			<form class="block half" id="login">
+				<h2 class="block-title">Sign in</h2>
+				
+				<input name="email" type="email" placeholder="Email address" />
+				<input name="password" type="password" placeholder="Password" />
+				<input type="submit" value="Sign in" />
+
+			</form>
+
+			<form class="block half" id="register">
+				<h2 class="block-title">Register</h2>
+
+				<input name="email" type="email" placeholder="Email address" />
+				<input name="password" type="password" placeholder="Password" />
+
+				<select name="plan" disabled>
+					<option value="!">Loading...</option>
+				</select>
+
+				<input type="submit" value="Create a free account" />
+				<sub class="subtext">All paid accounts are free for the first month.</sub>
+			</form>
+		</main>
+
+</body>
+</html>

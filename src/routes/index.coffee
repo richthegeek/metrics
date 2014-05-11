@@ -17,10 +17,11 @@ module.exports = (app) ->
 		return next()
 
 	# mount static resources
-	app.use '/public/css', express.static(__dirname + '/web/css')
-	app.use '/public/js', express.static(__dirname + '/web/js')
-	app.use '/public/images', express.static(__dirname + '/web/images')
-	app.use '/', express.static(__dirname + '/web/html')
+	console.log __dirname + '../web'
+	app.use '/public/css', express.static(__dirname + '/../../web/css')
+	app.use '/public/js', express.static(__dirname + '/../web')
+	app.use '/public/images', express.static(__dirname + '/../../web/images')
+	app.use '/', express.static(__dirname + '/../../web/html')
 
 	# API routes
 	files = [

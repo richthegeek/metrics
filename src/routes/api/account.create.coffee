@@ -15,6 +15,9 @@ module.exports = (app) ->
 			login: email,
 			email: email,
 			password: password
+			subscription:
+				price_list_id: "VbfYIdDOQQOD-gkUyg7QhQ"
+				plan_id: req.body.plan or '7ccQHQ2YSaef6rMwHZjVtA' # default to free
 
 		req.UA.User.save user, req.errorHandler ->
 			return res.send {
