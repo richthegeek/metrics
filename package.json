@@ -1,22 +1,17 @@
 {
-	"name": "metrics",
-	"description": "Store, compute, and retrieve metrics about input streams",
-
-	"dependencies": {
-		"async": "*",
-
-		"userapp": "*",
-
-		"express": "4.*",
-		"body-parser": "*",
-		"morgan": "*",
-
-
-		"influx": "*",
-		"redis": "*"
-	},
-
-	"scripts": {
-		"start": "node-dev lib/index"
-	}
+  "name": "metrics",
+  "description": "Store, compute, and retrieve metrics about input streams",
+  "dependencies": {
+    "async": "*",
+    "body-parser": "*",
+    "cookie-parser": "^1.0.1",
+    "express": "^4.1.2",
+    "influx": "*",
+    "morgan": "*",
+    "redis": "*",
+    "userapp": "*"
+  },
+  "scripts": {
+    "start": "node-dev lib/index"
+  }
 }

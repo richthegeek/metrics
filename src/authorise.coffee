@@ -7,9 +7,8 @@ module.exports = ->
 		# skip authorisation for registration and login
 		route = req.method.toUpperCase() + ' ' + req.path
 		unauthorised = [
-			'GET /'
-			'POST /api/account',
-			'POST /api/account/login'
+			'POST /account',
+			'POST /account/login'
 		]
 		if route in unauthorised
 			return next()
