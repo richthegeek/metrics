@@ -101,7 +101,8 @@ HOST: http://www.google.com
 
 ### Submit data to be summarised [POST]
 + Parameters
-    + time (optional, timestamp) ... Submit each datum at a time (milliseconds since epoch) other than now.
+    + id (required, string, `orders`) ... Name of the metric to be tracked
+    + key (optional) ... Metric-specific authorisation key which can be used in place of a token
 + Request (application/json)
 
         [
@@ -117,6 +118,7 @@ HOST: http://www.google.com
         }
 
 ### Update metric configuration [PUT]
+Note: The return value contains a metric-specfic key which can be used to authorise requests to POST /metrics/:id in place a login token.
 + Parameters
     + groups (object) ... An object where the key is the name of the group and other properties as follows:
     + .....period (string, `1d`) ... A InfluxDB time, see: <http://influxdb.org/docs/query_language/>
@@ -167,6 +169,10 @@ HOST: http://www.google.com
         {
             "status": "OK",
             "message": "The metric has been updated"
+            "metric": {
+                ...
+                "key": "6b2ec60db96bd81d2a10e71ce86d6f6dac20c910"
+            }
         }
         
 ### Delete a metric [DELETE]
