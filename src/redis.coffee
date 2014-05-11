@@ -19,11 +19,10 @@ module.exports = ->
 			key = crypto.createHash('sha1').update(Math.random().toString()).digest('hex')
 			value = [account, metric].join('|')
 			client.set ['metrics:keys:' + key, value, 'NX'], (err, created) ->
-				console.log arguments
 				if err
 					return callback err
 				
-				if created
+				if created is 'OK'
 					return callback null, key
 
 				# duplicate key, so rerun until we dont duplicate the key
@@ -34,5 +33,15 @@ module.exports = ->
 		
 		req.cacheToken = (token, account, callback) ->
 			client.set ['metrics:tokens:' + token, account, 'EX', 600], req.errorHandler callback
+
+		req.saveMetric = (account, metric, callback) ->
+			req.redis.hset 'metrics:metrics:' + req.account, metric.id, JSON.stringify(metric), req.errorHandler callback
+
+		req.getMetric = (account, id, callback) ->
+			req.redis.hget 'metrics:metrics:' + account, id, req.errorHandler (err, json) ->
+				try
+					callback err, JSON.parse json
+				catch e
+					return callback e
 		
 		next()

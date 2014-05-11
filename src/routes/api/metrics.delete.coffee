@@ -2,7 +2,7 @@ module.exports = (app) ->
 	async = require 'async'
 
 	# remove all data associated with a metric
-	app.del '/metrics/:id', (req, res, next) ->
+	app.delete '/metrics/:id', (req, res, next) ->
 
 		req.redis.hexists 'metrics:metrics:' + req.account, req.params.id, req.errorHandler (err, result) ->
 			if not result

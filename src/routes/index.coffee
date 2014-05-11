@@ -15,5 +15,7 @@ module.exports = (app) ->
 		'metrics.get_group'
 	]
 
+	api_router = require('express').Router()
 	for file in files
-		require('./route.' + file)(app)
+		require('./api/' + file)(api_router)
+	app.use '/api', api_router
