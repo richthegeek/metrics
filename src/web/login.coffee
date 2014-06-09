@@ -1,8 +1,5 @@
 $ ->
 	# update the plan list
-	UserApp.initialize {appId: '536a50e608ae0'}
-
-	UserApp.setToken 'wuPjboNkS_uo-J4_DSIL0w'
 	UserApp.Plan.search {price_list_id: "VbfYIdDOQQOD-gkUyg7QhQ"}, (err, result) ->
 		select = $ 'select[name=plan]'
 		select.empty()

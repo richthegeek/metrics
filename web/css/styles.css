@@ -4,7 +4,7 @@
 }
 #wrapper {
 	width: 1024px;
-	margin: 50px auto;
+	margin: 0px auto;
 }
 #wrapper > * {
 	display: block;
@@ -15,12 +15,28 @@ header {
 	background: url(/public/images/logo.png) no-repeat 50%;
 	font-size: 0;
 	color: transparent;
-	height: 150px;
+	height: 200px;
 }
 
 nav {
-	height: 30px;
+	height: 50px;
 	background: black;
+}
+nav a {
+	float: left;
+	color: #fff;
+	text-decoration: none;
+	height: 50px;
+	line-height: 50px;
+	font-size: 14pt;
+	font-weight: bold;
+	padding: 0px 20px;
+}
+nav a.right {
+	float: right;
+}
+nav a:hover, nav a.active {
+	background: #1fbd72;
 }
 
 .block {

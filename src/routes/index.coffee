@@ -8,7 +8,20 @@ module.exports = (app) ->
 	app.get '/', cookieParser(), (req, res, next) ->
 		if not req.cookies.metrics_token?
 			return res.redirect 302, '/login'
+
+		req.url = '/index.html'
 		next()
+
+	# verification page
+	app.get '/verify', (req, res, next) ->
+		if not req.query.token?
+			return next()
+
+		req.url = req.url.split('?')[0]
+		return next()
+
+	app.get '/logout', (req, res, next) ->
+		res.send 'todo'
 	
 	# add .html for static serving
 	app.use (req, res, next) ->
@@ -17,7 +30,6 @@ module.exports = (app) ->
 		return next()
 
 	# mount static resources
-	console.log __dirname + '../web'
 	app.use '/public/css', express.static(__dirname + '/../../web/css')
 	app.use '/public/js', express.static(__dirname + '/../web')
 	app.use '/public/images', express.static(__dirname + '/../../web/images')

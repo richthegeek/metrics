@@ -5,7 +5,9 @@ module.exports = (app) ->
 		email = req.body.email or req.query.email
 		password = req.body.password or req.query.password
 
+		console.log '?'
 		req.UA.User.login {login: email, password: password}, req.errorHandler (err, user) ->
+			console.log '!'
 			# todo: handle UserApp "locks"
 			# cache the token for fast lookup
 			req.cacheToken user.token, user.user_id, ->
